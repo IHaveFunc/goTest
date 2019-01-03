@@ -15,6 +15,7 @@ import (
 //     })
 // }
 func Router() *gin.Engine {
+	gin.SetMode(gin.ReleaseMode)
 	route := gin.Default()
 
 	route.GET("/home", func(c *gin.Context) {
@@ -22,9 +23,10 @@ func Router() *gin.Engine {
 			"message": "Hello World!",
 		})
 	})
-
 	route.GET("/list", controller.List)
 	route.GET("/article/:id", controller.Article)
+
+	route.POST("/save/article", controller.Essay)
 
 	return route
 }
