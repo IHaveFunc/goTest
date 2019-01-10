@@ -2,7 +2,6 @@ package config
 
 import (
 	"io/ioutil"
-	"log"
 	"sync"
 
 	yaml "gopkg.in/yaml.v2"
@@ -12,33 +11,38 @@ type config struct {
 	Version string
 	Db      struct {
 		Host     string
-		Port     int
+		Port     uint16
 		Database string
 		Username string
 		Password string
 	}
+	Time string
 }
 
 var c *config
 var once sync.Once
 
 func init() {
-	data, err := ioutil.ReadFile("env.yml")
-	if err != nil {
-		log.Fatalf("error: %v", err)
-	}
+	once.Do(func() {
+		data, _ := ioutil.ReadFile("env.yml")
 
-	if c == nil {
-		once.Do(func() {
-			c := config{}
-
-			err = yaml.Unmarshal([]byte(data), &c)
-			if err != nil {
-				log.Fatalf("error: %v", err)
-			}
-			Instance = &c
-		})
-	}
+		c := config{}
+		_ = yaml.Unmarshal([]byte(data), &c)
+		Instance = &c
+	})
 }
+
+// func ConfigInit() *config {
+
+// 	once.Do(func() {
+// 		data, _ := ioutil.ReadFile("env.yml")
+
+// 		c := config{}
+// 		_ = yaml.Unmarshal([]byte(data), &c)
+// 		Instance = &c
+// 	})
+
+// 	return Instance
+// }
 
 var Instance *config
